@@ -80,6 +80,12 @@ void ExceptionEscapeCheck::check(const MatchFinder::MatchResult &Result) {
 
          "which should not throw exceptions")
         << MatchedDecl;
+  auto ExceptionTypes = Tracer.analyze(MatchedDecl).getExceptionTypes();
+  for (auto t : ExceptionTypes) {
+    diag(MatchedDecl->getLocation(), "function %0 may throw %1")
+        << MatchedDecl
+        << t->getLocallyUnqualifiedSingleStepDesugaredType().getAsString();
+  }
 }
 
 } // namespace bugprone
