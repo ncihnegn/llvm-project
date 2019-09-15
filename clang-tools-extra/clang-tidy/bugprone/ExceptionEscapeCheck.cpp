@@ -72,7 +72,7 @@ void ExceptionEscapeCheck::check(const MatchFinder::MatchResult &Result) {
     return;
 
   if (Tracer.analyze(MatchedDecl).getBehaviour() ==
-      utils::ExceptionAnalyzer::State::Throwing)
+      utils::ExceptionAnalyzer::State::Throwing) {
     // FIXME: We should provide more information about the exact location where
     // the exception is thrown, maybe the full path the exception escapes
     diag(MatchedDecl->getLocation(),
@@ -80,11 +80,12 @@ void ExceptionEscapeCheck::check(const MatchFinder::MatchResult &Result) {
 
          "which should not throw exceptions")
         << MatchedDecl;
-  auto ExceptionTypes = Tracer.analyze(MatchedDecl).getExceptionTypes();
-  for (auto t : ExceptionTypes) {
-    diag(MatchedDecl->getLocation(), "function %0 may throw %1")
-        << MatchedDecl
-        << t->getLocallyUnqualifiedSingleStepDesugaredType().getAsString();
+    auto ExceptionTypes = Tracer.analyze(MatchedDecl).getExceptionTypes();
+    for (auto t : ExceptionTypes) {
+      diag(MatchedDecl->getLocation(), "function %0 may throw %1")
+          << MatchedDecl
+          << t->getLocallyUnqualifiedSingleStepDesugaredType().getAsString();
+    }
   }
 }
 
